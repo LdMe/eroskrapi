@@ -1,4 +1,6 @@
 import pupeteer from "puppeteer";
+import fs from "fs";
+
 /**
  * Clase encargada de hacer scraping de una página web.
  * @class
@@ -57,12 +59,26 @@ class Scraper {
   }
 
   /**
+   * Guarda el HTML de la página web en un archivo.
+   */
+  async saveHtml(html, filename) {
+    fs.writeFile(filename, html, function (err) {
+      if (err) {
+        return console.log(err);
+      }
+      console.log("The file was saved!");
+    });
+  }
+
+  /**
    * Cierra el navegador.
    * @async
    */
   async close() {
     await this.browser.close();
   }
+
 }
+
 
 export default Scraper;

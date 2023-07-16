@@ -2,7 +2,8 @@
 * Clase scrapController
 * función: obtener los datode una página web usando puppeteer y jsdom
 */
-import Scraper from "../utils/scraper.js";
+import Scraper from "../scraper/scraper.js";
+import Parser from "../parser/parser.js";
 import { JSDOM } from "jsdom";
 
 class scrapController {
@@ -15,25 +16,18 @@ class scrapController {
     static async getPage(url) {
         const scraper = new Scraper();
         await scraper.init();
-        const content = await scraper.scrape(url, 15);
+        const content = await scraper.scrape(url, 2);
         await scraper.close();
         return content;
     }
+    static parseProducts(content) {
+        const parser = new Parser(content);
+        const products = parser.getProducts();
+        return products;
+    }
     static async getProducts(url) {
         const content = await scrapController.getPage(url);
-        const products = [];
-        const dom = new JSDOM(content);
-        const productElements = dom.window.document.querySelectorAll(".product-item");
-        productElements.forEach((productElement) => {
-            const name = productElement.querySelector(".product-title").textContent.trim();
-            const price = productElement.querySelector(".price-offer-now").textContent.trim();
-            const product = {
-                name,
-                price,
-            };
-            products.push(product);
-        }
-        );
+        const products = scrapController.parseProducts(content);
         return products;
     }
 
