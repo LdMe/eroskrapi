@@ -12,9 +12,11 @@ class Parser {
         productElements.forEach((productElement) => {
             const name = productElement.querySelector(".product-title").textContent.trim();
             const price = productElement.querySelector(".price-offer-now").textContent.trim();
+            const image = productElement.querySelector(".product-img").src;
             const product = {
                 name,
                 price,
+                image
             };
             products.push(product);
         }

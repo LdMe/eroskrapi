@@ -33,29 +33,34 @@ class Scraper {
    * @returns {string} - HTML de la página web.
    */
   async scrape(url, scrollTimes = 0) {
-    await this.page.goto(url, { waitUntil: "load", timeout: 0 });
-    while (scrollTimes > 0) {
-      try {
-        const previousHeight = await this.page.evaluate(
-          "document.body.scrollHeight"
-        );
-        await this.page.evaluate(
-          "window.scrollTo(0, document.body.scrollHeight)"
-        );
-        await this.page.waitForFunction(
-          `document.body.scrollHeight > ${previousHeight}`,
-          { timeout: 1000 }
-        );
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      } catch (e) {
-        console.log(e);
+    try {
+      await this.page.goto(url, { waitUntil: "load", timeout: 0 });
+      while (scrollTimes > 0) {
+        try {
+          const previousHeight = await this.page.evaluate(
+            "document.body.scrollHeight"
+          );
+          await this.page.evaluate(
+            "window.scrollTo(0, document.body.scrollHeight)"
+          );
+          await this.page.waitForFunction(
+            `document.body.scrollHeight > ${previousHeight}`,
+            { timeout: 1000 }
+          );
+          await new Promise((resolve) => setTimeout(resolve, 500));
+        } catch (e) {
+          console.log(e);
+        }
+
+        scrollTimes--;
       }
 
-      scrollTimes--;
+      const html = await this.page.content();
+      return html;
+    } catch (e) {
+      console.log(e);
+      return null;
     }
-
-    const html = await this.page.content();
-    return html;
   }
 
   /**
@@ -64,7 +69,7 @@ class Scraper {
   async saveHtml(html, filename) {
     fs.writeFile(filename, html, function (err) {
       if (err) {
-        return console.log(err);
+        console.log(err);
       }
       console.log("The file was saved!");
     });

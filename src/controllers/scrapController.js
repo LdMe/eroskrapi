@@ -4,7 +4,6 @@
 */
 import Scraper from "../scraper/scraper.js";
 import Parser from "../parser/parser.js";
-import { JSDOM } from "jsdom";
 
 class scrapController {
     /**
@@ -14,9 +13,11 @@ class scrapController {
      * @returns {string} - Contenido de la página web.
      */
     static async getPage(url) {
-        const scraper = new Scraper();
+        const scraper = new Scraper(false);
         await scraper.init();
         const content = await scraper.scrape(url, 2);
+
+        await scraper.saveHtml(content,"test.html");
         await scraper.close();
         return content;
     }
